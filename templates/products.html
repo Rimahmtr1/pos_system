@@ -139,7 +139,7 @@
     const unit_type = document.getElementById('product-unit_type').value;
 
     const method = id ? 'PUT' : 'POST';
-    const url = id ? `/pos_system/templates/products.html/${id}` : '/products';
+    const url = id ? `/templates/products.html/${id}` : '/products';
 
     const res = await fetch(url, {
       method,
