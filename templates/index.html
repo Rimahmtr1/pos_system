@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Supermarket POS</title>
+  <link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#2563eb" />
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="p-6 bg-gray-100">
+
+  <h1 class="text-2xl font-bold mb-4">POS - Sales</h1>
+
+  <div class="flex justify-between mb-4">
+    <a href="/sales" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">View Sales</a>
+    <a href="/manage-products" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">Manage Products</a>
+    <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Logout</a>
+  </div>
+
+  <!-- Container where products will be dynamically loaded -->
+  <div id="products" class="grid grid-cols-1 gap-2"></div>
+
+  <!-- Your main JS script for POS functionality -->
+  <script src="/static/script.js"></script>
+
+  <!-- Receipt Popup Modal -->
+  <div id="receipt" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded shadow w-80 text-sm">
+      <h2 class="text-lg font-bold mb-2">Receipt</h2>
+      <div id="receipt-content" class="mb-4"></div>
+      <button onclick="window.print()" class="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 transition">Print</button>
+      <button onclick="closeReceipt()" class="ml-2 text-red-600 hover:text-red-800 transition">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function closeReceipt() {
+      document.getElementById('receipt').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

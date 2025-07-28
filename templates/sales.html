@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sales History with Filters</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="p-6 bg-gray-100">
+
+  <h1 class="text-2xl font-bold mb-4">Sales History</h1>
+  <div class="mb-4 space-x-2">
+    <a href="/" class="bg-blue-600 text-white px-4 py-2 rounded">Back to POS</a>
+    <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded">Logout</a>
+  </div>
+
+  <div class="mb-4 flex flex-wrap gap-4 max-w-xl">
+    <input type="text" id="search-product" placeholder="Search product name..." class="border p-2 rounded flex-grow" />
+    <label>
+      From:
+      <input type="date" id="filter-from" class="border p-2 rounded" />
+    </label>
+    <label>
+      To:
+      <input type="date" id="filter-to" class="border p-2 rounded" />
+    </label>
+    <button id="filter-btn" class="bg-green-600 text-white px-4 py-2 rounded">Filter</button>
+    <button id="clear-btn" class="bg-gray-400 text-white px-4 py-2 rounded">Clear</button>
+    <button id="export-btn" class="bg-indigo-600 text-white px-4 py-2 rounded">Export CSV</button>
+
+  </div>
+
+  <div id="sales" class="space-y-2 max-w-3xl"></div>
+
+  <script>
+    let allSales = [];
+
+    async function loadSales() {
+      const res = await fetch('/api/sales');
+      allSales = await res.json();
+      renderSales(allSales);
+    }
+
+    function renderSales(sales) {
+      const container = document.getElementById('sales');
+      container.innerHTML = '';
+
+      if (sales.length === 0) {
+        container.innerHTML = '<p class="text-gray-600">No sales found.</p>';
+        return;
+      }
+
+      sales.forEach(s => {
+        const div = document.createElement('div');
+        div.className = "p-4 bg-white rounded shadow";
+
+        const saleTime = new Date(s.sale_time).toLocaleString();
+
+        div.innerHTML = `
+          <p><strong>Product:</strong> ${s.product_name}</p>
+          <p><strong>Qty:</strong> ${s.quantity}</p>
+          <p><strong>Total:</strong> ${s.total_price.toFixed(2)} LBP</p>
+          <p><strong>Time:</strong> ${saleTime}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterSales() {
+      const searchTerm = document.getElementById('search-product').value.toLowerCase();
+      const fromDateStr = document.getElementById('filter-from').value;
+      const toDateStr = document.getElementById('filter-to').value;
+
+      let filtered = allSales;
+
+      if (searchTerm) {
+        filtered = filtered.filter(s => s.product_name.toLowerCase().includes(searchTerm));
+      }
+
+      if (fromDateStr) {
+        const fromDate = new Date(fromDateStr);
+        filtered = filtered.filter(s => new Date(s.sale_time) >= fromDate);
+      }
+
+      if (toDateStr) {
+        const toDate = new Date(toDateStr);
+        // Add one day to include the whole day
+        toDate.setDate(toDate.getDate() + 1);
+        filtered = filtered.filter(s => new Date(s.sale_time) < toDate);
+      }
+
+      renderSales(filtered);
+    }
+
+    document.getElementById('filter-btn').onclick = filterSales;
+
+    document.getElementById('clear-btn').onclick = () => {
+      document.getElementById('search-product').value = '';
+      document.getElementById('filter-from').value = '';
+      document.getElementById('filter-to').value = '';
+      renderSales(allSales);
+    }
+document.getElementById('export-btn').onclick = () => {
+  window.location.href = '/export-sales';
+};
+
+    loadSales();
+  </script>
+</body>
+</html>
