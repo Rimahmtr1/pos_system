@@ -209,7 +209,7 @@ def api_sales():
 def manage_products_page():
     return render_template('products.html', role=session.get('user_role'))
 
-@app.route('/products', methods=['POST'])
+@app.route('/pos_system/templates/products.html', methods=['POST'])
 @login_required
 @role_required('admin')
 def create_product():
